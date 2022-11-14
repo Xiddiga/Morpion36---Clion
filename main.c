@@ -36,5 +36,7 @@ int main() {
         tourJeu++;
     }
 
+    freeTab(tab, X, Y);
+
     return 0;
 }
