@@ -58,4 +58,16 @@ pos bestPosition(game_tab tab, player* pl_max);
 
 void poseTokenOnGameTab(game_tab tab, pos theposition, char sign);
 
+void play(game_tab tab, player *pl1, player *pl2, int tourJeu, bool bot_vs_human, bool *finishMorpion);
+
+void set_players(bool bot_vs_human, player *pl1, player *pl2);
+
+bool all_round_display(bool bot_vs_human);
+
+void play_human(game_tab tab, player *pl, bool *finishMorpion, bool bot_vs_human);
+
+void play_bot(game_tab tab, player *pl, bool *finishMorpion, bool bot_vs_human);
+
+void display(game_tab tab, bool finish_display);
+
 #endif //MORPION36_CORE_H

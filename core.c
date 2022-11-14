@@ -1,12 +1,10 @@
 #include "core.h"
+#include "display.h"
 
 #include <stdlib.h>
 #include <stdbool.h>
 #include <math.h>
-
-
-//By Harry
-
+#include <unistd.h>
 
 bool valid_coord(int x, int y){// verifie que des coordonner soit dans un tableau
     return ((x >= 0 && x < X)&&
@@ -48,6 +46,8 @@ void eval_1_direction(int* code, int* code_max, int* code_min) {
 
 void points_verticale(game_tab tab, pos position, int* code_max, int* code_min, player* pl_max) {
 
+    pos new_pos = position;
+
     int tmp_y = position.posY - 4;
     int x = position.posX;
 
@@ -58,11 +58,11 @@ void points_verticale(game_tab tab, pos position, int* code_max, int* code_min, 
             int code = 0;
 
             for (int j = tmp_y; j < tmp_y + 5; j++) {
-                if (!(valid_coord(x, j)))
+                if (!(valid_coord(x, j))) {
                     code += 13;
-                else {
-                    position.posY = j;
-                    eval_1_quintuplet(tab, position, &code, pl_max);
+                } else {
+                    new_pos.posY = j;
+                    eval_1_quintuplet(tab, new_pos, &code, pl_max);
                 }
             }
 
@@ -74,6 +74,8 @@ void points_verticale(game_tab tab, pos position, int* code_max, int* code_min, 
 }
 
 void points_horizontal(game_tab tab, pos position, int* code_max, int* code_min, player* pl_max){
+
+    pos new_pos = position;
 
     int tmp_x = position.posX - 4;
     int y = position.posY;
@@ -88,8 +90,8 @@ void points_horizontal(game_tab tab, pos position, int* code_max, int* code_min,
                 if (!(valid_coord(i, y)))
                     code += 13;
                 else {
-                    position.posX = i;
-                    eval_1_quintuplet(tab, position, &code, pl_max);
+                    new_pos.posX = i;
+                    eval_1_quintuplet(tab, new_pos, &code, pl_max);
                 }
             }
 
@@ -102,6 +104,8 @@ void points_horizontal(game_tab tab, pos position, int* code_max, int* code_min,
 
 
 void points_bas_gauche(game_tab tab, pos position, int* code_max, int* code_min, player* pl_max){
+
+    pos new_pos = position;
 
     int tmp_x = position.posX - 4;
     int tmp_y = position.posY + 4;
@@ -119,9 +123,9 @@ void points_bas_gauche(game_tab tab, pos position, int* code_max, int* code_min,
                 if (!(valid_coord(i, j)))
                     code += 13;
                 else {
-                    position.posX = i;
-                    position.posY = j;
-                    eval_1_quintuplet(tab, position, &code, pl_max);
+                    new_pos.posX = i;
+                    new_pos.posY = j;
+                    eval_1_quintuplet(tab, new_pos, &code, pl_max);
                 }
                 i++;
             }
@@ -135,6 +139,8 @@ void points_bas_gauche(game_tab tab, pos position, int* code_max, int* code_min,
 }
 
 void points_haut_gauche(game_tab tab, pos position, int* code_max, int* code_min, player* pl_max){
+
+    pos new_pos = position;
 
     int tmp_x = position.posX - 4;
     int tmp_y = position.posY - 4;
@@ -152,9 +158,9 @@ void points_haut_gauche(game_tab tab, pos position, int* code_max, int* code_min
                 if (!(valid_coord(i, j)))
                     code += 13;
                 else {
-                    position.posX = i;
-                    position.posY = j;
-                    eval_1_quintuplet(tab, position, &code, pl_max);
+                    new_pos.posX = i;
+                    new_pos.posY = j;
+                    eval_1_quintuplet(tab, new_pos, &code, pl_max);
                 }
                 i++;
             }
@@ -205,26 +211,29 @@ void calc_value(game_tab tab, player* pl_max, pos position){
     int y = position.posY;
 
     for (int i = x-4; i <= x+4; i++) {
-        if (valid_coord(position.posX + i, position.posY)) {
+        if (valid_coord(i, position.posY)) {
             pos new_position;
-            new_position.posX=position.posX + i, new_position.posY=position.posY;
+            new_position.posX = i;
+            new_position.posY = position.posY;
             eval_position(tab, new_position, pl_max);
         }
     }
 
     for (int i = y-4; i <= y+4; i++) {
-        if (valid_coord(position.posX, position.posY + i)) {
+        if (valid_coord(position.posX, i)) {
             pos new_position;
-            new_position.posX = position.posX,new_position.posY=position.posY + i;
+            new_position.posX = position.posX;
+            new_position.posY = i;
             eval_position(tab, new_position, pl_max);
         }
     }
 
     int j = y-4;
     for (int i = x-4; i <= x+4; i++) {
-        if (valid_coord(position.posX + i, position.posY + j)) {
+        if (valid_coord(i, j)) {
             pos new_position;
-            new_position.posX=position.posX + i, new_position.posY=position.posY+j;
+            new_position.posX = i;
+            new_position.posY = j;
             eval_position(tab, new_position, pl_max);
         }
         j++;
@@ -232,9 +241,10 @@ void calc_value(game_tab tab, player* pl_max, pos position){
 
     j = y+4;
     for (int i = x-4; i <= x+4; i++) {
-        if (valid_coord(position.posX + i, position.posY + j)) {
+        if (valid_coord(i, j)) {
             pos new_position;
-            new_position.posX=position.posX + i, new_position.posY=position.posY+j;
+            new_position.posX = i;
+            new_position.posY = j;
             eval_position(tab, new_position, pl_max);
         }
         j--;
@@ -248,19 +258,6 @@ player* init_player(char team, bool robot){
 
     return pl;
 }
-
-//By Bill
-
-/*
-void create_game_tab(token*** TplateauJeu,int x,int y){
-    (*TplateauJeu) = (token**)malloc(sizeof(token*)*x);
-    for (int i=0;i<x;i++){
-        (*TplateauJeu)[i] =(token)malloc(sizeof(token)*y);
-    }
-}
-*/
-
-
 
 token*** create_game_tab(int x,int y){
     token ***res = (token***)malloc(x*sizeof(token**));
@@ -302,14 +299,6 @@ void poseTokenOnGameTab(game_tab tab, pos theposition, char sign)
     tab[theposition.posX][theposition.posY]->sign=sign;
     tab[theposition.posX][theposition.posY]->filled=true;
 }
-
-/*
-void place_token(char sign, token*** game_tab){//poser le token sur le tableau de jeu
-    pos thePosition = best_value(sign, game_tab,X,Y);
-    int x =thePosition.posX , y=thePosition.posY;
-    game_tab[x][y]=fillToken(thePosition,sign);
-}
-*/
 
 bool finishquintupletvertical(game_tab tab, pos thePosition, char sign)
 {
@@ -395,10 +384,48 @@ bool thefinishquintuplet(game_tab tab, pos thePosition, char sign)
     return (finishquintupletvertical(tab,thePosition,sign)|| finishquintuplethorizontal(tab,thePosition,sign) || finishquintupletBasGauche(tab,thePosition,sign) || finishquintupletHautGauche(tab,thePosition,sign) );
 }
 
+void tab_best_position(token new_token, char team_max, pos* best_positions, int* best_value, int *element_nb)
+{
+    if(team_max == 'c') {
+        if(new_token.value_c > *best_value) {
+            *best_value = new_token.value_c;
+            //free(best_positions);
+            //best_positions = NULL;
+            //best_positions = (pos*)malloc(sizeof(pos));
+            best_positions[0] = new_token.position;
+            *element_nb = 1;
+        } else if(new_token.value_c == *best_value) {
+            //best_positions = (pos*)realloc(best_positions, ((*element_nb) + 1) * sizeof(pos));
+            best_positions[*element_nb] = new_token.position;
+            (*element_nb)+=1;
+        } else {
+            return;
+        }
+    } else {
+        if(new_token.value_r > *best_value) {
+            *best_value = new_token.value_r;
+            //free(best_positions);
+            //best_positions = NULL;
+            //best_positions = (pos*)malloc(sizeof(pos));
+            best_positions[0] = new_token.position;
+            *element_nb = 1;
+        } else if(new_token.value_r == *best_value) {
+            //best_positions = (pos*)realloc(best_positions, ((*element_nb) + 1) * sizeof(pos));
+            best_positions[*element_nb] = new_token.position;
+            (*element_nb)+=1;
+        } else {
+            return;
+        }
+    }
+}
+
 pos bestPosition(game_tab tab, player* pl_max)
 {
-    int bestValue = 0;
     pos thePosition;
+    pos best_positions[264]; //= (pos*)malloc(sizeof(pos));
+    int best_value = 0;
+    int element_nb = 0;
+    int *ptr_nb = &element_nb;
 
     char team_max = pl_max->team;
 
@@ -408,23 +435,77 @@ pos bestPosition(game_tab tab, player* pl_max)
         {
             if (tab[i][j]->filled==false)
             {
-                if (team_max == 'r') {
-                    if (tab[i][j]->value_r > bestValue)
-                    {
-                        bestValue = tab[i][j]->value_r;
-                        thePosition.posX = i;
-                        thePosition.posY = j;
-                    }
-                } else if (team_max == 'c') {
-                    if (tab[i][j]->value_c > bestValue)
-                    {
-                        bestValue = tab[i][j]->value_c;
-                        thePosition.posX = i;
-                        thePosition.posY = j;
-                    }
-                }
+                token *new_token = tab[i][j];
+                tab_best_position(*new_token, team_max, best_positions, &best_value, ptr_nb);
             }
         }
     }
+
+    int index = rand() % (element_nb);
+    thePosition = best_positions[index];
+
     return thePosition;
+}
+
+void set_players(bool bot_vs_human, player *pl1, player *pl2){
+    if (bot_vs_human)
+        pl1->robot = false;
+}
+
+bool all_round_display(bool bot_vs_human) {
+
+    bool see_all = false;
+
+    if (!(bot_vs_human))
+        see_all = all_results();
+
+    return see_all;
+}
+
+void play_human(game_tab tab, player *pl, bool *finishMorpion, bool bot_vs_human) {
+    print_tab_V2(tab, X, Y);
+    pos played_position = ask_pos();
+    while(!valid_coord(played_position.posX, played_position.posY) || tab[played_position.posX][played_position.posY]->filled) {
+        print_bar(2 * (X+2));
+        printf("\n/!\\ Position invalide, veuillez recommencer /!\\\n");
+        played_position = ask_pos();
+    }
+    poseTokenOnGameTab(tab, played_position, pl->team);
+    calc_value(tab, pl, played_position);
+
+    if (thefinishquintuplet(tab, played_position, pl->team)) {
+        print_tab_V2(tab, X, Y);
+        print_who_win(pl, bot_vs_human);
+        *finishMorpion = true;
+    }
+}
+
+void play_bot(game_tab tab, player *pl, bool *finishMorpion, bool bot_vs_human) {
+    pos played_position = bestPosition(tab, pl);
+    poseTokenOnGameTab(tab, played_position, pl->team);
+    calc_value(tab, pl, played_position);
+
+    if (thefinishquintuplet(tab, played_position, pl->team)) {
+        print_tab_V2(tab, X, Y);
+        print_who_win(pl, bot_vs_human);
+        *finishMorpion = true;
+    }
+}
+
+void play(game_tab tab, player *pl1, player *pl2, int tourJeu, bool bot_vs_human, bool *finishMorpion) {
+
+    if (tourJeu%2 == 0) {
+        if (!(pl1->robot))
+            play_human(tab, pl1, finishMorpion, bot_vs_human);
+        else
+            play_bot(tab, pl1, finishMorpion, bot_vs_human);
+    } else
+        play_bot(tab, pl2, finishMorpion, bot_vs_human);
+}
+
+void display(game_tab tab, bool finish_display) {
+    if (finish_display) {
+        print_tab_V2(tab, X, Y);
+        sleep(1);
+    }
 }

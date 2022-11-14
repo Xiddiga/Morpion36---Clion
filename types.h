@@ -5,8 +5,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#define X 15
-#define Y 30
+#define X 30
+#define Y 20
 
 typedef struct player{
     char team;

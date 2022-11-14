@@ -5,6 +5,7 @@
 
 #include "types.h"
 
+/*
 #define HORIZONTAL_BAR 205
 #define VERTICAL 186
 #define CORNER_LU 201
@@ -16,9 +17,9 @@
 #define CROSS 206
 #define HORIZONTAL_U 203
 #define HORIZONTAL_B 202
+*/
 
-
-/*#define HORIZONTAL_BAR "\xE2\x95\x90"
+#define HORIZONTAL_BAR "\xE2\x95\x90"
 #define VERTICAL "\xE2\x95\x91"
 #define CORNER_LU "\xE2\x95\x94"
 #define CORNER_RU "\xE2\x95\x97"
@@ -28,13 +29,15 @@
 #define CORNER_RB "\xE2\x95\x9D"
 #define HORIZONTAL_U "\xE2\x95\xA6"
 #define HORIZONTAL_B "\xE2\x95\xA9"
-#define CROSS "\xE2\x95\xAC"*/
+#define CROSS "\xE2\x95\xAC"
 
 void print_bar(int len);
 
-void style(bool selected);
+void style(bool selected, char *demand, char *selec_1, char *selec_2);
 
 bool who_play();
+
+bool all_results();
 
 void print_board(game_tab board);
 
@@ -58,6 +61,6 @@ void you_win();
 
 void you_lose();
 
-void print_who_win(player *pl1, player *pl2);
+void print_who_win(player *pl1, bool bot_vs_human);
 
 #endif //MORPION36_DISPLAY_H
