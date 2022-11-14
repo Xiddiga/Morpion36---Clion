@@ -17,6 +17,7 @@
 #define CROSS 206
 #define HORIZONTAL_U 203
 #define HORIZONTAL_B 202
+#define BLACK_SQUARE 219
 */
 
 #define HORIZONTAL_BAR "\xE2\x95\x90"
@@ -30,6 +31,7 @@
 #define HORIZONTAL_U "\xE2\x95\xA6"
 #define HORIZONTAL_B "\xE2\x95\xA9"
 #define CROSS "\xE2\x95\xAC"
+#define BLACK_SQUARE "\xE2\x96\x88"
 
 void print_bar(int len);
 
