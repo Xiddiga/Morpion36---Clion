@@ -167,14 +167,14 @@ void print_tab_V1(token*** Token, int x, int y)
     }
 }
 
-/*void print_tab_V2(token*** Token, int x, int y)
+void print_tab_V2(token*** Token, int x, int y)
 {
     system("clear"); //unix
     //system("CLS"); //windows
 
-    for (int i = 0; i <= (2 * x + 3); i++)
+    for (int j = 0; j <= (2 * y + 3); j++)
     {
-        for (int j = 0; i <= (4 * y + 3); j++)
+        for (int i = 0; i <= (4 * x + 3); i++)
         {
             int i_print = (i / 4) - 1;
             int i_hun = i_print/100;
@@ -186,7 +186,7 @@ void print_tab_V1(token*** Token, int x, int y)
             int j_ten = (j_print - (j_hun * 100)) / 10;
             int j_unit = j_print % 10;
 
-            if (j < 3 && i < 3 || (j % 4 !=1 && i <3) || (i % 2 == 1 && j < 3)) {
+            if (j < 3 && i < 3 || (i % 4 !=1 && j <3) || (j % 2 == 1 && i < 3)) {
                 printf(" ");
             } else if (j == 0) {
                 if (i_hun == 0)
@@ -210,27 +210,27 @@ void print_tab_V1(token*** Token, int x, int y)
                 printf("%d", j_unit);
             } else if (i == 3 && j == 3) {
                 printf("%s", CORNER_LU);
-            } else if (j == (4 * y + 3) && i == 3) {
+            } else if (i == (4 * x + 3) && j == 3) {
                 printf("%s", CORNER_RU);
-            } else if (j == 3 && i == (2 * y + 3)) {
+            } else if (i == 3 && j == (2 * y + 3)) {
                 printf("%s", CORNER_LB);
-            } else if (j == (4 * y + 3) && i == (2 * x + 3)) {
+            } else if (i == (4 * x + 3) && j == (2 * y + 3)) {
                 printf("%s", CORNER_RB);
-            } else if (j % 4 == 3 && i % 2 == 1 && j != 3 && i != 3 && j != (4 * y + 3) && i != (2 * x + 3)) {
+            } else if (i % 4 == 3 && j % 2 == 1 && i != 3 && j != 3 && i != (4 * x + 3) && j != (2 * y + 3)) {
                 printf("%s", CROSS);
-            } else if (j % 4 != 3 && i % 2 == 1) {
+            } else if (i % 4 != 3 && j % 2 == 1) {
                 printf("%s", HORIZONTAL_BAR);
-            } else if (j % 4 == 3 && i % 2 == 0) {
+            } else if (i % 4 == 3 && j % 2 == 0) {
                 printf("%s", VERTICAL);
-            } else if (j % 4 == 3 && i == 3) {
+            } else if (i % 4 == 3 && j == 3) {
                 printf("%s", HORIZONTAL_U);
-            } else if (j % 4 == 3 && i == (2 * x + 3) ){
+            } else if (i % 4 == 3 && j == (2 * y + 3) ){
                 printf("%s", HORIZONTAL_B);
-            } else if (j == 3 && i % 2 == 1) {
+            } else if (i == 3 && j % 2 == 1) {
                 printf("%s", VERTICAL_L);
-            } else if (j == (4 * y + 3) && i % 2 == 1) {
+            } else if (i == (4 * x + 3) && j % 2 == 1) {
                 printf("%s", VERTICAL_R);
-            } else if (j % 4 == 0 && i % 2 == 0) {
+            } else if (i % 4 == 0 && j % 2 == 0) {
                 char value = print_char(Token[i_print][j_print]);
                 printf(" %c ", value);
             }
@@ -238,9 +238,9 @@ void print_tab_V1(token*** Token, int x, int y)
         printf("\n");
     }
     printf("\n");
-} */
+}
 
-void print_tab_V2(token*** Token, int x, int y)
+/*void print_tab_V2(token*** Token, int x, int y)
 {
     system("clear"); //unix
     //system("CLS"); //windows
@@ -312,7 +312,7 @@ void print_tab_V2(token*** Token, int x, int y)
         printf("\n");
     }
     printf("\n");
-}
+}*/
 
 void print_tab_r(token*** Token, int x, int y)
 {
