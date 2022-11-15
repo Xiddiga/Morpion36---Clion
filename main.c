@@ -38,5 +38,5 @@ int main() {
 
     freeTab(tab, X, Y);
 
-    return 0;
+    return EXIT_SUCCESS;
 }

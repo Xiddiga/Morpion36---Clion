@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <ctype.h>
 
 #include "types.h"
 #include "display.h"
@@ -284,21 +285,50 @@ void print_tab_c(token*** Token, int x, int y)
 pos ask_pos()
 {
     pos position;
-    int x, y;
+    char x[10];
+    char y[10];
 
     print_bar(2 * (X+2));
 
     printf("\nEntrez la position de la case a jouer (x puis y) :\n");
 
     printf("x : ");
-    scanf("%d", &x);
+    scanf("%s", x);
     printf("y : ");
-    scanf("%d", &y);
+    scanf("%s", y);
 
-    //print_bar(2 * (X+2));
+    size_t x_length = strlen(x);
+    size_t y_length = strlen(y);
 
-    position.posX = x;
-    position.posY = y;
+    bool is_correct = true;
+
+    for(int i=0;i<x_length;i++)
+    {
+        if (!isdigit(x[i]))
+        {
+            is_correct=false;
+            break;
+        }
+    }
+    for(int i=0;i<y_length;i++)
+    {
+        if (!isdigit(y[i]))
+        {
+            is_correct=false;
+            break;
+        }
+    }
+
+    if (is_correct==false)
+    {
+        position.posX = -1;
+        position.posY = -1;
+    }
+    else
+    {
+        position.posX = atoi(x);
+        position.posY = atoi(y);
+    }
 
     return position;
 }
