@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <math.h>
-#include <unistd.h>
 
 bool valid_coord(int x, int y){// verifie que des coordonner soit dans un tableau
     return ((x >= 0 && x < X)&&
@@ -506,6 +505,5 @@ void play(game_tab tab, player *pl1, player *pl2, int tourJeu, bool bot_vs_human
 void display(game_tab tab, bool finish_display) {
     if (finish_display) {
         print_tab_V2(tab, X, Y);
-        sleep(1);
     }
 }
