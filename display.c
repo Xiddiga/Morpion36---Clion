@@ -139,7 +139,7 @@ char print_char(token* Token)
     else if ((Token->sign) == 'r')
         return 'O';
     else
-        return '_';
+        return ' ';
 }
 
 // affiche le tableau

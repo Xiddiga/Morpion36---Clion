@@ -13,7 +13,6 @@ typedef struct player{
     bool robot;
 }player;
 
-
 typedef struct pos{
     int posX;
     int posY;

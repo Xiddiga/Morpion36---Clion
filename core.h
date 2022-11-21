@@ -4,23 +4,21 @@
 #include "types.h"
 
 
-//By Harry
-
 bool valid_coord(int x, int y);
 
-int value_code(int n, bool value_max);
+int value_code(int n, bool is_value_max);
 
-void eval_1_quintuplet(game_tab tab, pos position, int* code, player* pl_max);
+void eval_1_position(game_tab tab, pos position, int* code, player* pl_max);
 
-void eval_1_direction(int* code, int* code_max, int* code_min);
+void eval_1_quintuplet(int* code, int* value_max, int* value_min);
 
-void points_verticale(game_tab tab, pos position, int* code_max, int* code_min, player* pl_max);
+void points_verticale(game_tab tab, pos position, int* value_max, int* value_min, player* pl_max);
 
-void points_horizontal(game_tab tab, pos position, int* code_max, int* code_min, player* pl_max);
+void points_horizontal(game_tab tab, pos position, int* value_max, int* value_min, player* pl_max);
 
-void points_bas_gauche(game_tab tab, pos position, int* code_max, int* code_min, player* pl_max);
+void points_bas_gauche(game_tab tab, pos position, int* value_max, int* value_min, player* pl_max);
 
-void points_haut_gauche(game_tab tab, pos position, int* code_max, int* code_min, player* pl_max);
+void points_haut_gauche(game_tab tab, pos position, int* value_max, int* value_min, player* pl_max);
 
 void eval_position(game_tab tab, pos position, player* pl_max);
 
@@ -29,10 +27,6 @@ void init_value(game_tab tab, player* pl_max);
 void calc_value(game_tab tab, player* pl_max, pos position);
 
 player* init_player(char team, bool robot);
-
-//By Bill
-
-
 
 token*** create_game_tab(int x,int y);//Fait
 
@@ -60,14 +54,20 @@ void poseTokenOnGameTab(game_tab tab, pos theposition, char sign);
 
 void play(game_tab tab, player *pl1, player *pl2, int tourJeu, bool bot_vs_human, bool *finishMorpion);
 
-void set_players(bool bot_vs_human, player *pl1, player *pl2);
+void set_players(bool bot_vs_human, player *pl);
 
 bool all_round_display(bool bot_vs_human);
 
 void play_human(game_tab tab, player *pl, bool *finishMorpion, bool bot_vs_human);
 
-void play_bot(game_tab tab, player *pl, bool *finishMorpion, bool bot_vs_human);
+void play_bot(game_tab tab, player *pl, player *pl_min, bool *finishMorpion, bool bot_vs_human);
 
 void display(game_tab tab, bool finish_display);
+
+game_tab copy_tab(game_tab tab);
+int max(int a, int b);
+int min(int a, int b);
+token minimax_calc(game_tab tab, int depth, int alpha, int beta, player pl_max, player pl_min, bool is_max);
+pos minimax(game_tab tab, player pl_max, player pl_min);
 
 #endif //MORPION36_CORE_H

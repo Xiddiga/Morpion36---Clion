@@ -23,7 +23,7 @@ int main() {
     player *pl1 = init_player('c',true);
     player *pl2 = init_player('r',true);
 
-    set_players(bot_vs_human, pl1, pl2);
+    set_players(bot_vs_human, pl1);
 
     bool finish_display = all_round_display(bot_vs_human);
 
