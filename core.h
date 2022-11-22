@@ -67,6 +67,6 @@ void display(game_tab tab, bool finish_display);
 game_tab copy_tab(game_tab tab);
 int max(int a, int b);
 int min(int a, int b);
-tuple minimax(game_tab tab, player *pl_max, player *pl_min, int depth, int alpha, int beta, pos postion, bool isMax);
+tuple minimax(game_tab tab, player *pl, player *pl_min, int depth, int alpha, int beta, bool isMax);
 
 #endif //MORPION36_CORE_H

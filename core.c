@@ -514,7 +514,7 @@ void play_human(game_tab tab, player *pl, bool *finishMorpion, bool bot_vs_human
 // execution des fonction pour un tour d'un joueur robot
 void play_bot(game_tab tab, player *pl, player *pl_min, bool *finishMorpion, bool bot_vs_human) {
     //pos played_position = bestPosition(tab, pl);
-    pos played_position = minimax(tab, pl, pl_min, 2, INT_MIN, INT_MAX, (pos){0,0}, true).position;
+    pos played_position = minimax(tab, pl, pl_min, 2, INT_MIN, INT_MAX, true).position;
     poseTokenOnGameTab(tab, played_position, pl->team);
     calc_value(tab, pl, played_position);
 
@@ -591,17 +591,36 @@ int min(int a, int b){
 // the alpha value is updated with the max function
 // the beta value is updated with the min function
 
-tuple minimax(game_tab tab, player *pl, player *pl_min, int depth, int alpha, int beta, pos postion, bool isMax){
+tuple minimax(game_tab tab, player *pl, player *pl_min, int depth, int alpha, int beta, bool isMax){
     tuple t;
-    t.position.posX = postion.posX;
-    t.position.posY = postion.posY;
+    t.position.posX = 0;
+    t.position.posY = 0;
     t.score = 0;
 
-    if (depth == 0 || thefinishquintuplet(tab, t.position, pl->team) || thefinishquintuplet(tab, t.position, pl_min->team)){
-        if (pl->team == 'c')
-            t.score = tab[t.position.posX][t.position.posY]->value_c;
-        else
-            t.score = tab[t.position.posX][t.position.posY]->value_r;
+    if (depth == 0) {
+        for (int i=0;i<X;i++){
+            for (int j=0;j<Y;j++){
+                if (thefinishquintuplet(tab, tab[i][j]->position, pl->team) || thefinishquintuplet(tab, tab[i][j]->position, pl_min->team)) {
+                    if (pl->team == 'c') {
+                        t.score = tab[i][j]->value_c;
+                    } else {
+                        t.score = tab[i][j]->value_r;
+                    }
+                    t.position = tab[i][j]->position;
+                    i = X;
+                    break;
+                }
+                if (pl->team == 'c') {
+                    if (t.score < tab[i][j]->value_c) {
+                        t.score = tab[i][j]->value_c;
+                        t.position = tab[i][j]->position;
+                    }
+                } else if (t.score < tab[i][j]->value_r) {
+                        t.score = tab[i][j]->value_r;
+                        t.position = tab[i][j]->position;
+                }
+            }
+        }
         return t;
     }
 
@@ -616,14 +635,17 @@ tuple minimax(game_tab tab, player *pl, player *pl_min, int depth, int alpha, in
                     played_position.posY = j;
                     poseTokenOnGameTab(new_tab, played_position, pl->team);
                     calc_value(new_tab, pl, played_position);
-                    tuple new_t = minimax(new_tab, pl, pl_min, depth-1, alpha, beta, played_position, false);
+                    tuple new_t = minimax(new_tab, pl, pl_min, depth-1, alpha, beta, false);
                     if (new_t.score > best){
                         best = new_t.score;
                         t.position = played_position;
                     }
-                    alpha = max(alpha, best);
-                    if (beta <= alpha)
+                    if (beta <= alpha) {
+                        i = X;
                         break;
+                    }
+                    alpha = max(alpha, best);
+                    freeTab(new_tab, X, Y);
                 }
             }
         }
@@ -640,14 +662,17 @@ tuple minimax(game_tab tab, player *pl, player *pl_min, int depth, int alpha, in
                     played_position.posY = j;
                     poseTokenOnGameTab(new_tab, played_position, pl_min->team);
                     calc_value(new_tab, pl_min, played_position);
-                    tuple new_t = minimax(new_tab, pl, pl_min, depth-1, alpha, beta, played_position, true);
+                    tuple new_t = minimax(new_tab, pl, pl_min, depth-1, alpha, beta, true);
                     if (new_t.score < best){
                         best = new_t.score;
                         t.position = played_position;
                     }
-                    beta = min(beta, best);
-                    if (beta <= alpha)
+                    if (beta <= alpha) {
+                        i=X;
                         break;
+                    }
+                    beta = min(beta, best);
+                    freeTab(new_tab, X, Y);
                 }
             }
         }
