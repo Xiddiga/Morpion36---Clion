@@ -579,8 +579,6 @@ int min(int a, int b){
 
 token minimax_calc(game_tab tab, int depth, int alpha, int beta, player *pl_max, player *pl_min, bool is_max_player) {
 
-    game_tab dummy_tab = copy_tab(tab);
-
     token best_token;
     pos best_pos;
     //best_pos = bestPosition(dummy_tab, pl_max); marche pas jsp pourquoi
@@ -604,7 +602,8 @@ token minimax_calc(game_tab tab, int depth, int alpha, int beta, player *pl_max,
         int value = INT_MIN;
         for (int i = 0; i < X; i++) {
             for (int j = 0; j < Y; j++) {
-                if (!dummy_tab[i][j]->filled) {
+                if (!tab[i][j]->filled) {
+                    game_tab dummy_tab = copy_tab(tab);
                     poseTokenOnGameTab(dummy_tab, dummy_tab[i][j]->position, pl_max->team);
                     calc_value(dummy_tab, pl_max, dummy_tab[i][j]->position);
                     //print_tab_c(dummy_tab, X, Y);
@@ -622,10 +621,10 @@ token minimax_calc(game_tab tab, int depth, int alpha, int beta, player *pl_max,
                         i = X;
                         break;
                     }
+                    freeTab(dummy_tab, X, Y);
                 }
             }
         }
-        freeTab(dummy_tab, X, Y);
         best_token.position = best_pos;
         return best_token;
     } else {
@@ -633,7 +632,8 @@ token minimax_calc(game_tab tab, int depth, int alpha, int beta, player *pl_max,
         bool broke = false;
         for (int i = 0; i < X; i++) {
             for (int j = 0; j < Y; j++) {
-                if (!dummy_tab[i][j]->filled) {
+                if (!tab[i][j]->filled) {
+                    game_tab dummy_tab = copy_tab(tab);
                     poseTokenOnGameTab(dummy_tab, dummy_tab[i][j]->position, pl_min->team);
                     calc_value(dummy_tab, pl_min, dummy_tab[i][j]->position);
                     //print_tab_c(dummy_tab, X, Y);
@@ -651,10 +651,10 @@ token minimax_calc(game_tab tab, int depth, int alpha, int beta, player *pl_max,
                         i = X;
                         break;
                     }
+                    freeTab(dummy_tab, X, Y);
                 }
             }
         }
-        freeTab(dummy_tab, X, Y);
         best_token.position = best_pos;
         return best_token;
     }
