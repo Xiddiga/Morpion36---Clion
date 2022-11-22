@@ -584,6 +584,8 @@ token minimax_calc(game_tab tab, int depth, int alpha, int beta, player pl_max, 
     best_pos.posX = -1;
     best_pos.posY = -1;
     best_token.position = best_pos;
+    best_token.value_c = -1;
+    best_token.value_r = -1;
 
     char sign;
     if (pl_max.team == 'c')
@@ -600,7 +602,7 @@ token minimax_calc(game_tab tab, int depth, int alpha, int beta, player pl_max, 
         for (int i = 0; i < X; i++) {
             for (int j = 0; j < Y; j++) {
                 if (!dummy_tab[i][j]->filled) {
-                    poseTokenOnGameTab(dummy_tab, dummy_tab[i][j]->position, sign);
+                    poseTokenOnGameTab(dummy_tab, dummy_tab[i][j]->position, pl_max.team);
                     calc_value(dummy_tab, &pl_max, dummy_tab[i][j]->position);
                     int new_value;
                     if (sign == 'c')
@@ -614,18 +616,18 @@ token minimax_calc(game_tab tab, int depth, int alpha, int beta, player pl_max, 
                     alpha = max(alpha, value);
                     if (beta <= alpha)
                         break;
-
                 }
             }
         }
+        freeTab(dummy_tab, X, Y);
         best_token.position = best_pos;
         return best_token;
     } else {
-        int value = 1000000;
+        int value = 1000000000;
         for (int i = 0; i < X; i++) {
             for (int j = 0; j < Y; j++) {
                 if (!dummy_tab[i][j]->filled) {
-                    poseTokenOnGameTab(dummy_tab, dummy_tab[i][j]->position, sign);
+                    poseTokenOnGameTab(dummy_tab, dummy_tab[i][j]->position, pl_min.team);
                     calc_value(dummy_tab, &pl_min, dummy_tab[i][j]->position);
                     int new_value;
                     if (sign == 'c')
@@ -642,6 +644,7 @@ token minimax_calc(game_tab tab, int depth, int alpha, int beta, player pl_max, 
                 }
             }
         }
+        freeTab(dummy_tab, X, Y);
         best_token.position = best_pos;
         return best_token;
     }
@@ -649,7 +652,7 @@ token minimax_calc(game_tab tab, int depth, int alpha, int beta, player pl_max, 
 
 pos minimax(game_tab tab, player pl_max, player pl_min) {
 
-    token token_case = minimax_calc(tab, 2, -10000, 1000000, pl_max, pl_min, true);
+    token token_case = minimax_calc(tab, 3, -10000, 1000000, pl_max, pl_min, true);
 
     return token_case.position;
 }

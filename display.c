@@ -14,6 +14,9 @@ void print_bar(int len)
         printf("%s", HORIZONTAL_BAR);
 }
 
+// DEBUT AFFICHAGE QUESTIONS
+
+// gere le nombre d'espace entre le texte et une barre verticale
 void print_space_vertical(int len, char *msg)
 {
     int len_msg = strlen(msg);
@@ -29,9 +32,7 @@ void print_space_vertical(int len, char *msg)
     printf("%s", VERTICAL);
 }
 
-// DEBUT AFFICHAGE QUI JOUE
-
-// gere l'affichage de la question "qui joue ?"
+// gere le syle d'affichage des questions
 void style(bool selected, char *demand, char *selec_1, char *selec_2)
 {
     int len = strlen(demand);
@@ -74,6 +75,7 @@ void style(bool selected, char *demand, char *selec_1, char *selec_2)
     printf("selectionnez avec les touches (z + entrer) et (s + entrer) puis valider avec (espace + entrer) \n \n");
 }
 
+// gere la selection des questions
 bool question(char *demand, char *selec_1, char *selec_2)
 {
     bool selected = false;
@@ -107,7 +109,7 @@ bool question(char *demand, char *selec_1, char *selec_2)
     return selected;
 }
 
-// question a l'utilisateur pour sab=voir si il veut jouer contre un bot ou voir une partie d'un bot contre un bot
+// question a l'utilisateur pour sabvoir si il veut jouer contre un bot ou voir une partie d'un bot contre un bot
 bool who_play()
 {
     char selec_1[15] = "bot vs bot";
@@ -118,6 +120,7 @@ bool who_play()
     return question(demand, selec_1, selec_2);
 }
 
+// question a l'utilisateur pour savoir si il veut voir le plateau de jeu à tout les tours ou juste à la fin
 bool all_results()
 {
     char selec_1[25] = "a la fin";
@@ -128,7 +131,7 @@ bool all_results()
     return question(demand, selec_1, selec_2);
 }
 
-// FIN AFFICHAGE QUI JOUE
+// FIN AFFICHAGE QUESTIONS
 // DEBUT AFFICHAGE TABLEAU
 
 // retourne le signe a afficher dans le tableau
@@ -142,7 +145,7 @@ char print_char(token* Token)
         return ' ';
 }
 
-// affiche le tableau
+// affiche le tableau sans lignes
 void print_tab_V1(token*** Token, int x, int y)
 {
     system("clear"); //unix
@@ -168,6 +171,7 @@ void print_tab_V1(token*** Token, int x, int y)
     }
 }
 
+// affiche le tableau avec lignes
 void print_tab_V2(token*** Token, int x, int y)
 {
     system("clear"); //unix
@@ -241,6 +245,7 @@ void print_tab_V2(token*** Token, int x, int y)
     printf("\n");
 }
 
+// affiche les valeurs du joueur X
 void print_tab_r(token*** Token, int x, int y)
 {
     for (int j = 0; j <= y; j++)
@@ -261,6 +266,7 @@ void print_tab_r(token*** Token, int x, int y)
     }
 }
 
+// affiche les valeurs du joueur O
 void print_tab_c(token*** Token, int x, int y)
 {
     for (int j = 0; j <= y; j++)
@@ -282,6 +288,7 @@ void print_tab_c(token*** Token, int x, int y)
 }
 // FIN AFFICHAGE TABLEAU
 
+// demander la position à jouer à l'utilisateur
 pos ask_pos()
 {
     pos position;
@@ -333,6 +340,7 @@ pos ask_pos()
     return position;
 }
 
+// affichage du bot qui a gagné
 void print_botwinner(player *pl)
 {
     char *msg;
@@ -353,6 +361,7 @@ void print_botwinner(player *pl)
     printf("%s\n", CORNER_RB);
 }
 
+// affichage pour le joueur quand il a gagné
 void you_win()
 {
     printf("%s%s    %s%s  %s%s%s%s%s%s  %s%s    %s%s     %s%s     %s%s %s%s %s%s%s    %s%s     %s%s\n",BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE);
@@ -362,6 +371,7 @@ void you_win()
     printf("   %s%s     %s%s%s%s%s%s   %s%s%s%s%s%s       %s%s%s %s%s%s  %s%s %s%s   %s%s%s%s     %s%s\n", BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE);
 }
 
+// affichage pour le joueur quand il a perdu
 void you_lose()
 {
     printf("%s%s    %s%s  %s%s%s%s%s%s  %s%s    %s%s     %s%s       %s%s%s%s%s%s  %s%s%s%s%s%s%s %s%s%s%s%s%s%s     %s%s\n", BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE);
@@ -371,6 +381,7 @@ void you_lose()
     printf("   %s%s     %s%s%s%s%s%s   %s%s%s%s%s%s      %s%s%s%s%s%s%s  %s%s%s%s%s%s  %s%s%s%s%s%s%s %s%s%s%s%s%s%s     %s%s\n", BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE, BLACK_SQUARE);
 }
 
+// savoir vers quel affichage se diriger
 // appeler la fonction avec pl1 le gagnant et pl2 le perdant
 void print_who_win(player *pl1, bool bot_vs_human)
 {
