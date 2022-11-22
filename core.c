@@ -629,6 +629,10 @@ tuple minimax(game_tab tab, player *pl, player *pl_min, int depth, int alpha, in
                     poseTokenOnGameTab(new_tab, played_position, pl->team);
                     calc_value(new_tab, pl, played_position);
                     tuple new_t = minimax(new_tab, pl, pl_min, depth-1, alpha, beta, false);
+                    if (beta <= alpha) {
+                        i = X;
+                        break;
+                    }
                     if (new_t.score == best){
                         int random = rand() % 2;
                         if (random == 0) {
@@ -638,10 +642,6 @@ tuple minimax(game_tab tab, player *pl, player *pl_min, int depth, int alpha, in
                     } else if (new_t.score > best){
                         best = new_t.score;
                         t.position = played_position;
-                    }
-                    if (beta <= alpha) {
-                        i = X;
-                        break;
                     }
                     alpha = max(alpha, best);
                     freeTab(new_tab, X, Y);
@@ -663,6 +663,10 @@ tuple minimax(game_tab tab, player *pl, player *pl_min, int depth, int alpha, in
                     poseTokenOnGameTab(new_tab, played_position, pl_min->team);
                     calc_value(new_tab, pl_min, played_position);
                     tuple new_t = minimax(new_tab, pl, pl_min, depth-1, alpha, beta, true);
+                    if (beta <= alpha) {
+                        i=X;
+                        break;
+                    }
                     if (new_t.score == best) {
                         int random = rand() % 2;
                         if (random == 0) {
@@ -672,10 +676,6 @@ tuple minimax(game_tab tab, player *pl, player *pl_min, int depth, int alpha, in
                     } else if (new_t.score < best){
                         best = -new_t.score;
                         t.position = played_position;
-                    }
-                    if (beta <= alpha) {
-                        i=X;
-                        break;
                     }
                     beta = min(beta, best);
                     freeTab(new_tab, X, Y);

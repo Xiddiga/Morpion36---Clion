@@ -21,7 +21,7 @@ int main() {
     bool bot_vs_human = who_play();
 
     player *pl1 = init_player('c',true, false);
-    player *pl2 = init_player('r',true, true);
+    player *pl2 = init_player('r',true, false);
 
     set_players(bot_vs_human, pl1);
 
