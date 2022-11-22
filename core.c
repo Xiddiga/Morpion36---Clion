@@ -583,7 +583,9 @@ token minimax_calc(game_tab tab, int depth, int alpha, int beta, player *pl_max,
 
     token best_token;
     pos best_pos;
-    best_pos = bestPosition(dummy_tab, pl_max);
+    //best_pos = bestPosition(dummy_tab, pl_max); marche pas jsp pourquoi
+    best_pos.posX = 0;
+    best_pos.posY = 0;
     best_token.position = best_pos;
     best_token.value_c = 0;
     best_token.value_r = 0;
@@ -616,8 +618,10 @@ token minimax_calc(game_tab tab, int depth, int alpha, int beta, player *pl_max,
                         best_pos = dummy_tab[i][j]->position;
                     }
                     alpha = max(alpha, value);
-                    if (beta <= alpha)
+                    if (beta <= alpha) {
+                        i = X;
                         break;
+                    }
                 }
             }
         }
@@ -626,6 +630,7 @@ token minimax_calc(game_tab tab, int depth, int alpha, int beta, player *pl_max,
         return best_token;
     } else {
         int value = INT_MAX;
+        bool broke = false;
         for (int i = 0; i < X; i++) {
             for (int j = 0; j < Y; j++) {
                 if (!dummy_tab[i][j]->filled) {
@@ -642,8 +647,10 @@ token minimax_calc(game_tab tab, int depth, int alpha, int beta, player *pl_max,
                         best_pos = dummy_tab[i][j]->position;
                     }
                     beta = min(beta, value);
-                    if (beta <= alpha)
+                    if (beta <= alpha) {
+                        i = X;
                         break;
+                    }
                 }
             }
         }
