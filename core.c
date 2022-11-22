@@ -514,7 +514,7 @@ void play_human(game_tab tab, player *pl, bool *finishMorpion, bool bot_vs_human
 // execution des fonction pour un tour d'un joueur robot
 void play_bot(game_tab tab, player *pl, player *pl_min, bool *finishMorpion, bool bot_vs_human) {
     //pos played_position = bestPosition(tab, pl);
-    pos played_position = minimax(tab, pl, pl_min);
+    pos played_position = minimax(tab, pl, pl_min, 2, INT_MIN, INT_MAX, (pos){0,0}, true).position;
     poseTokenOnGameTab(tab, played_position, pl->team);
     calc_value(tab, pl, played_position);
 
@@ -577,94 +577,83 @@ int min(int a, int b){
         return b;
 }
 
-token minimax_calc(game_tab tab, int depth, int alpha, int beta, player *pl_max, player *pl_min, bool is_max_player) {
+// create a function to evaluate the score of a position with minimax algorithm and alpha beta pruning
+// this function return tuple with the best position and the best score
+// the score for cross is tab[i][j]->value_c and for circle is tab[i][j]->value_r
+// after place a token on the game tab, we have to calculate the score of the position with calc_value function
+// the minimax algorithm is a recursive function
+// the function take the game tab, the player, the opponent, the depth of the tree, alpha and beta value, the position tested and a boolean to know if it's the max or min player
+// the depth of the tree is the number of times we call the function
+// the alpha and beta value are used for the alpha beta pruning
+// the alpha value is the best score for the maximizer
+// the beta value is the best score for the minimizer
+// the alpha value is initialized to INT_MIN and the beta value is initialized to INT_MAX
+// the alpha value is updated with the max function
+// the beta value is updated with the min function
 
-    token best_token;
-    pos best_pos;
-    //best_pos = bestPosition(dummy_tab, pl_max); marche pas jsp pourquoi
-    best_pos.posX = 0;
-    best_pos.posY = 0;
-    best_token.position = best_pos;
-    best_token.value_c = 0;
-    best_token.value_r = 0;
+tuple minimax(game_tab tab, player *pl, player *pl_min, int depth, int alpha, int beta, pos postion, bool isMax){
+    tuple t;
+    t.position.posX = postion.posX;
+    t.position.posY = postion.posY;
+    t.score = 0;
 
-    char sign;
-    if (pl_max->team == 'c')
-        sign = 'c';
-    else
-        sign = 'r';
-
-    if (depth == 0 || thefinishquintuplet(tab, best_pos, sign)) {
-        return best_token;
+    if (depth == 0 || thefinishquintuplet(tab, t.position, pl->team) || thefinishquintuplet(tab, t.position, pl_min->team)){
+        if (pl->team == 'c')
+            t.score = tab[t.position.posX][t.position.posY]->value_c;
+        else
+            t.score = tab[t.position.posX][t.position.posY]->value_r;
+        return t;
     }
 
-    if (is_max_player) {
-        int value = INT_MIN;
-        for (int i = 0; i < X; i++) {
-            for (int j = 0; j < Y; j++) {
-                if (!tab[i][j]->filled) {
-                    game_tab dummy_tab = copy_tab(tab);
-                    poseTokenOnGameTab(dummy_tab, dummy_tab[i][j]->position, pl_max->team);
-                    calc_value(dummy_tab, pl_max, dummy_tab[i][j]->position);
-                    //print_tab_c(dummy_tab, X, Y);
-                    int new_value;
-                    if (sign == 'c')
-                        new_value = minimax_calc(dummy_tab, depth - 1, alpha, beta, pl_max, pl_min, false).value_c;
-                    else
-                        new_value = minimax_calc(dummy_tab, depth - 1, alpha, beta, pl_max, pl_min, false).value_r;
-                    if (new_value > value) {
-                        value = new_value;
-                        best_pos = dummy_tab[i][j]->position;
+    if (isMax){
+        int best = INT_MIN;
+        for (int i=0;i<X;i++){
+            for (int j=0;j<Y;j++){
+                if (!tab[i][j]->filled){
+                    game_tab new_tab = copy_tab(tab);
+                    pos played_position;
+                    played_position.posX = i;
+                    played_position.posY = j;
+                    poseTokenOnGameTab(new_tab, played_position, pl->team);
+                    calc_value(new_tab, pl, played_position);
+                    tuple new_t = minimax(new_tab, pl, pl_min, depth-1, alpha, beta, played_position, false);
+                    if (new_t.score > best){
+                        best = new_t.score;
+                        t.position = played_position;
                     }
-                    alpha = max(alpha, value);
-                    if (beta <= alpha) {
-                        i = X;
+                    alpha = max(alpha, best);
+                    if (beta <= alpha)
                         break;
-                    }
-                    freeTab(dummy_tab, X, Y);
                 }
             }
         }
-        best_token.position = best_pos;
-        return best_token;
+        t.score = best;
+        return t;
     } else {
-        int value = INT_MAX;
-        bool broke = false;
-        for (int i = 0; i < X; i++) {
-            for (int j = 0; j < Y; j++) {
-                if (!tab[i][j]->filled) {
-                    game_tab dummy_tab = copy_tab(tab);
-                    poseTokenOnGameTab(dummy_tab, dummy_tab[i][j]->position, pl_min->team);
-                    calc_value(dummy_tab, pl_min, dummy_tab[i][j]->position);
-                    //print_tab_c(dummy_tab, X, Y);
-                    int new_value;
-                    if (sign == 'c')
-                        new_value = minimax_calc(dummy_tab, depth - 1, alpha, beta, pl_max, pl_min, true).value_c;
-                    else
-                        new_value = minimax_calc(dummy_tab, depth - 1, alpha, beta, pl_max, pl_min, true).value_r;
-                    if (new_value < value) {
-                        value = new_value;
-                        best_pos = dummy_tab[i][j]->position;
+        int best = INT_MAX;
+        for (int i=0;i<X;i++){
+            for (int j=0;j<Y;j++){
+                if (!tab[i][j]->filled){
+                    game_tab new_tab = copy_tab(tab);
+                    pos played_position;
+                    played_position.posX = i;
+                    played_position.posY = j;
+                    poseTokenOnGameTab(new_tab, played_position, pl_min->team);
+                    calc_value(new_tab, pl_min, played_position);
+                    tuple new_t = minimax(new_tab, pl, pl_min, depth-1, alpha, beta, played_position, true);
+                    if (new_t.score < best){
+                        best = new_t.score;
+                        t.position = played_position;
                     }
-                    beta = min(beta, value);
-                    if (beta <= alpha) {
-                        i = X;
+                    beta = min(beta, best);
+                    if (beta <= alpha)
                         break;
-                    }
-                    freeTab(dummy_tab, X, Y);
                 }
             }
         }
-        best_token.position = best_pos;
-        return best_token;
+        t.score = best;
+        return t;
     }
-}
-
-pos minimax(game_tab tab, player *pl_max, player *pl_min) {
-
-    token token_case = minimax_calc(tab, 2, INT_MIN, INT_MAX, pl_max, pl_min, true);
-
-    return token_case.position;
 }
 
 // FIN ALGORITHME MINIMAX

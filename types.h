@@ -28,4 +28,9 @@ typedef struct token{
 
 typedef token*** game_tab;
 
+typedef struct tuple{
+    pos position;
+    int score;
+}tuple;
+
 #endif //MORPION36_TYPES_H
