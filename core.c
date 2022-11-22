@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <math.h>
+#include <limits.h> // pour minimax
 
 // DEBUT CALCUL VALEURS DES POSITIONS
 
@@ -513,7 +514,7 @@ void play_human(game_tab tab, player *pl, bool *finishMorpion, bool bot_vs_human
 // execution des fonction pour un tour d'un joueur robot
 void play_bot(game_tab tab, player *pl, player *pl_min, bool *finishMorpion, bool bot_vs_human) {
     //pos played_position = bestPosition(tab, pl);
-    pos played_position = minimax(tab, *pl, *pl_min);
+    pos played_position = minimax(tab, pl, pl_min);
     poseTokenOnGameTab(tab, played_position, pl->team);
     calc_value(tab, pl, played_position);
 
@@ -556,6 +557,7 @@ game_tab copy_tab(game_tab tab){
             new_tab[i][j]->filled = tab[i][j]->filled;
             new_tab[i][j]->value_c = tab[i][j]->value_c;
             new_tab[i][j]->value_r = tab[i][j]->value_r;
+            new_tab[i][j]->position = tab[i][j]->position;
         }
     }
     return new_tab;
@@ -575,20 +577,19 @@ int min(int a, int b){
         return b;
 }
 
-token minimax_calc(game_tab tab, int depth, int alpha, int beta, player pl_max, player pl_min, bool is_max_player) {
+token minimax_calc(game_tab tab, int depth, int alpha, int beta, player *pl_max, player *pl_min, bool is_max_player) {
 
     game_tab dummy_tab = copy_tab(tab);
 
-    pos best_pos;
     token best_token;
-    best_pos.posX = -1;
-    best_pos.posY = -1;
+    pos best_pos;
+    best_pos = bestPosition(dummy_tab, pl_max);
     best_token.position = best_pos;
-    best_token.value_c = -1;
-    best_token.value_r = -1;
+    best_token.value_c = 0;
+    best_token.value_r = 0;
 
     char sign;
-    if (pl_max.team == 'c')
+    if (pl_max->team == 'c')
         sign = 'c';
     else
         sign = 'r';
@@ -598,12 +599,13 @@ token minimax_calc(game_tab tab, int depth, int alpha, int beta, player pl_max, 
     }
 
     if (is_max_player) {
-        int value = -1000;
+        int value = INT_MIN;
         for (int i = 0; i < X; i++) {
             for (int j = 0; j < Y; j++) {
                 if (!dummy_tab[i][j]->filled) {
-                    poseTokenOnGameTab(dummy_tab, dummy_tab[i][j]->position, pl_max.team);
-                    calc_value(dummy_tab, &pl_max, dummy_tab[i][j]->position);
+                    poseTokenOnGameTab(dummy_tab, dummy_tab[i][j]->position, pl_max->team);
+                    calc_value(dummy_tab, pl_max, dummy_tab[i][j]->position);
+                    //print_tab_c(dummy_tab, X, Y);
                     int new_value;
                     if (sign == 'c')
                         new_value = minimax_calc(dummy_tab, depth - 1, alpha, beta, pl_max, pl_min, false).value_c;
@@ -623,12 +625,13 @@ token minimax_calc(game_tab tab, int depth, int alpha, int beta, player pl_max, 
         best_token.position = best_pos;
         return best_token;
     } else {
-        int value = 1000000000;
+        int value = INT_MAX;
         for (int i = 0; i < X; i++) {
             for (int j = 0; j < Y; j++) {
                 if (!dummy_tab[i][j]->filled) {
-                    poseTokenOnGameTab(dummy_tab, dummy_tab[i][j]->position, pl_min.team);
-                    calc_value(dummy_tab, &pl_min, dummy_tab[i][j]->position);
+                    poseTokenOnGameTab(dummy_tab, dummy_tab[i][j]->position, pl_min->team);
+                    calc_value(dummy_tab, pl_min, dummy_tab[i][j]->position);
+                    //print_tab_c(dummy_tab, X, Y);
                     int new_value;
                     if (sign == 'c')
                         new_value = minimax_calc(dummy_tab, depth - 1, alpha, beta, pl_max, pl_min, true).value_c;
@@ -650,9 +653,9 @@ token minimax_calc(game_tab tab, int depth, int alpha, int beta, player pl_max, 
     }
 }
 
-pos minimax(game_tab tab, player pl_max, player pl_min) {
+pos minimax(game_tab tab, player *pl_max, player *pl_min) {
 
-    token token_case = minimax_calc(tab, 3, -10000, 1000000, pl_max, pl_min, true);
+    token token_case = minimax_calc(tab, 2, INT_MIN, INT_MAX, pl_max, pl_min, true);
 
     return token_case.position;
 }

@@ -67,7 +67,7 @@ void display(game_tab tab, bool finish_display);
 game_tab copy_tab(game_tab tab);
 int max(int a, int b);
 int min(int a, int b);
-token minimax_calc(game_tab tab, int depth, int alpha, int beta, player pl_max, player pl_min, bool is_max);
-pos minimax(game_tab tab, player pl_max, player pl_min);
+token minimax_calc(game_tab tab, int depth, int alpha, int beta, player *pl_max, player *pl_min, bool is_max);
+pos minimax(game_tab tab, player *pl_max, player *pl_min);
 
 #endif //MORPION36_CORE_H

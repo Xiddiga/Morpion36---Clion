@@ -274,13 +274,13 @@ void print_tab_c(token*** Token, int x, int y)
         for (int i = 0; i <= x; i++)
         {
             if (j == 0 && i == 0) {
-                printf("    ");
+                printf("       ");
             } else if (j == 0 && i != 0) {
-                printf("%4d", i - 1);
+                printf("%7d", i - 1);
             } else if (i == 0 && j != 0) {
-                printf("%4d", j - 1);
+                printf("%7d", j - 1);
             } else if (i > 0 && j > 0) {
-                printf("%4d", Token[i-1][j-1]->value_r);
+                printf("%7d", Token[i-1][j-1]->value_r);
             }
         }
         printf("\n");
