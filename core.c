@@ -602,8 +602,10 @@ tuple minimax(game_tab tab, player *pl, player *pl_min, int depth, int alpha, in
             for (int j=0;j<Y;j++){
                 if (thefinishquintuplet(tab, tab[i][j]->position, pl->team) || thefinishquintuplet(tab, tab[i][j]->position, pl_min->team)) {
                     if (pl->team == 'c') {
+                        printf("passe dans c va gagner");
                         t.score = tab[i][j]->value_c;
                     } else {
+                        printf("passe dans r va gagner");
                         t.score = tab[i][j]->value_r;
                     }
                     t.position = tab[i][j]->position;
@@ -650,6 +652,7 @@ tuple minimax(game_tab tab, player *pl, player *pl_min, int depth, int alpha, in
             }
         }
         t.score = best;
+        printf("meilleur tuple : %d | %d %d \n", t.score, t.position.posX, t.position.posY);
         return t;
     } else {
         int best = INT_MAX;
@@ -664,7 +667,7 @@ tuple minimax(game_tab tab, player *pl, player *pl_min, int depth, int alpha, in
                     calc_value(new_tab, pl_min, played_position);
                     tuple new_t = minimax(new_tab, pl, pl_min, depth-1, alpha, beta, true);
                     if (new_t.score < best){
-                        best = new_t.score;
+                        best = -new_t.score;
                         t.position = played_position;
                     }
                     if (beta <= alpha) {
@@ -677,6 +680,7 @@ tuple minimax(game_tab tab, player *pl, player *pl_min, int depth, int alpha, in
             }
         }
         t.score = best;
+        printf("meilleur tuple : %d | %d %d \n", t.score, t.position.posX, t.position.posY);
         return t;
     }
 }
