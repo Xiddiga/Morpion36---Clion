@@ -26,7 +26,7 @@ void init_value(game_tab tab, player* pl_max);
 
 void calc_value(game_tab tab, player* pl_max, pos position);
 
-player* init_player(char team, bool robot);
+player* init_player(char team, bool robot, bool minimax);
 
 token*** create_game_tab(int x,int y);//Fait
 

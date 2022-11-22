@@ -11,6 +11,7 @@
 typedef struct player{
     char team;
     bool robot;
+    bool minimax;
 }player;
 
 typedef struct pos{

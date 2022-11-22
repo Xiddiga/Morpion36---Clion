@@ -425,10 +425,11 @@ bool thefinishquintuplet(game_tab tab, pos thePosition, char sign)
 // DEBUT INITIALISATION DU JEU
 
 // initialisation d'un joueur
-player* init_player(char team, bool robot){
+player* init_player(char team, bool robot, bool minimax){
     player* pl = (player*)malloc(sizeof(player));
     pl->team = team;
     pl->robot = robot;
+    pl->minimax = minimax;
 
     return pl;
 }
@@ -513,8 +514,12 @@ void play_human(game_tab tab, player *pl, bool *finishMorpion, bool bot_vs_human
 
 // execution des fonction pour un tour d'un joueur robot
 void play_bot(game_tab tab, player *pl, player *pl_min, bool *finishMorpion, bool bot_vs_human) {
-    //pos played_position = bestPosition(tab, pl);
-    pos played_position = minimax(tab, pl, pl_min, 2, INT_MIN, INT_MAX, true).position;
+    pos played_position;
+    if (pl->minimax) {
+        played_position = minimax(tab, pl, pl_min, 2, INT_MIN, INT_MAX, true).position;
+    } else {
+        played_position = bestPosition(tab, pl);
+    }
     poseTokenOnGameTab(tab, played_position, pl->team);
     calc_value(tab, pl, played_position);
 
@@ -577,20 +582,6 @@ int min(int a, int b){
         return b;
 }
 
-// create a function to evaluate the score of a position with minimax algorithm and alpha beta pruning
-// this function return tuple with the best position and the best score
-// the score for cross is tab[i][j]->value_c and for circle is tab[i][j]->value_r
-// after place a token on the game tab, we have to calculate the score of the position with calc_value function
-// the minimax algorithm is a recursive function
-// the function take the game tab, the player, the opponent, the depth of the tree, alpha and beta value, the position tested and a boolean to know if it's the max or min player
-// the depth of the tree is the number of times we call the function
-// the alpha and beta value are used for the alpha beta pruning
-// the alpha value is the best score for the maximizer
-// the beta value is the best score for the minimizer
-// the alpha value is initialized to INT_MIN and the beta value is initialized to INT_MAX
-// the alpha value is updated with the max function
-// the beta value is updated with the min function
-
 tuple minimax(game_tab tab, player *pl, player *pl_min, int depth, int alpha, int beta, bool isMax){
     tuple t;
     t.position.posX = 0;
@@ -602,10 +593,10 @@ tuple minimax(game_tab tab, player *pl, player *pl_min, int depth, int alpha, in
             for (int j=0;j<Y;j++){
                 if (thefinishquintuplet(tab, tab[i][j]->position, pl->team) || thefinishquintuplet(tab, tab[i][j]->position, pl_min->team)) {
                     if (pl->team == 'c') {
-                        printf("passe dans c va gagner");
+                        //printf("passe dans c va gagner");
                         t.score = tab[i][j]->value_c;
                     } else {
-                        printf("passe dans r va gagner");
+                        //printf("passe dans r va gagner");
                         t.score = tab[i][j]->value_r;
                     }
                     t.position = tab[i][j]->position;
@@ -638,7 +629,13 @@ tuple minimax(game_tab tab, player *pl, player *pl_min, int depth, int alpha, in
                     poseTokenOnGameTab(new_tab, played_position, pl->team);
                     calc_value(new_tab, pl, played_position);
                     tuple new_t = minimax(new_tab, pl, pl_min, depth-1, alpha, beta, false);
-                    if (new_t.score > best){
+                    if (new_t.score == best){
+                        int random = rand() % 2;
+                        if (random == 0) {
+                            best = new_t.score;
+                            t.position = played_position;
+                        }
+                    } else if (new_t.score > best){
                         best = new_t.score;
                         t.position = played_position;
                     }
@@ -652,7 +649,7 @@ tuple minimax(game_tab tab, player *pl, player *pl_min, int depth, int alpha, in
             }
         }
         t.score = best;
-        printf("meilleur tuple : %d | %d %d \n", t.score, t.position.posX, t.position.posY);
+        //printf("meilleur tuple : %d | %d %d \n", t.score, t.position.posX, t.position.posY);
         return t;
     } else {
         int best = INT_MAX;
@@ -666,7 +663,13 @@ tuple minimax(game_tab tab, player *pl, player *pl_min, int depth, int alpha, in
                     poseTokenOnGameTab(new_tab, played_position, pl_min->team);
                     calc_value(new_tab, pl_min, played_position);
                     tuple new_t = minimax(new_tab, pl, pl_min, depth-1, alpha, beta, true);
-                    if (new_t.score < best){
+                    if (new_t.score == best) {
+                        int random = rand() % 2;
+                        if (random == 0) {
+                            best = -new_t.score;
+                            t.position = played_position;
+                        }
+                    } else if (new_t.score < best){
                         best = -new_t.score;
                         t.position = played_position;
                     }
@@ -680,7 +683,7 @@ tuple minimax(game_tab tab, player *pl, player *pl_min, int depth, int alpha, in
             }
         }
         t.score = best;
-        printf("meilleur tuple : %d | %d %d \n", t.score, t.position.posX, t.position.posY);
+        //printf("meilleur tuple : %d | %d %d \n", t.score, t.position.posX, t.position.posY);
         return t;
     }
 }
