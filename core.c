@@ -584,38 +584,44 @@ int min(int a, int b){
 
 tuple minimax(game_tab tab, player *pl, player *pl_min, int depth, int alpha, int beta, bool isMax){
     tuple t;
-    t.position.posX = 0;
-    t.position.posY = 0;
+    t.position.posX = -1;
+    t.position.posY = -1;
     t.score = 0;
 
     if (depth == 0) {
         for (int i=0;i<X;i++){
-            for (int j=0;j<Y;j++){
-                if (thefinishquintuplet(tab, tab[i][j]->position, pl->team) || thefinishquintuplet(tab, tab[i][j]->position, pl_min->team)) {
+            for (int j=0;j<Y;j++) {
+                if (!tab[i][j]->filled) {
+                    if (thefinishquintuplet(tab, tab[i][j]->position, pl->team) ||
+                        thefinishquintuplet(tab, tab[i][j]->position, pl_min->team)) {
+                        if (pl->team == 'c') {
+                            //printf("passe dans c va gagner");
+                            t.score = tab[i][j]->value_c;
+                        } else {
+                            //printf("passe dans r va gagner");
+                            t.score = tab[i][j]->value_r;
+                        }
+                        t.position = tab[i][j]->position;
+                        i = X;
+                        break;
+                    }
                     if (pl->team == 'c') {
-                        //printf("passe dans c va gagner");
-                        t.score = tab[i][j]->value_c;
-                    } else {
-                        //printf("passe dans r va gagner");
-                        t.score = tab[i][j]->value_r;
-                    }
-                    t.position = tab[i][j]->position;
-                    i = X;
-                    break;
-                }
-                if (pl->team == 'c') {
-                    if (t.score < tab[i][j]->value_c) {
-                        t.score = tab[i][j]->value_c;
-                        t.position = tab[i][j]->position;
-                    }
-                } else if (t.score < tab[i][j]->value_r) {
+                        if (t.score < tab[i][j]->value_c) {
+                            t.score = tab[i][j]->value_c;
+                            t.position = tab[i][j]->position;
+                        }
+                    } else if (t.score < tab[i][j]->value_r) {
                         t.score = tab[i][j]->value_r;
                         t.position = tab[i][j]->position;
+                    }
                 }
             }
         }
         return t;
     }
+
+    tuple all_t[264];
+    int nb_element = 0;
 
     if (isMax){
         int best = INT_MIN;
@@ -634,22 +640,24 @@ tuple minimax(game_tab tab, player *pl, player *pl_min, int depth, int alpha, in
                         break;
                     }
                     if (new_t.score == best){
-                        int random = rand() % 2;
-                        if (random == 0) {
-                            best = new_t.score;
-                            t.position = played_position;
-                        }
+                        all_t[nb_element] = new_t;
+                        nb_element++;
                     } else if (new_t.score > best){
                         best = new_t.score;
-                        t.position = played_position;
+                        new_t.position = played_position;
+
+                        all_t[0] = new_t;
+                        nb_element = 1;
                     }
                     alpha = max(alpha, best);
                     freeTab(new_tab, X, Y);
                 }
             }
         }
+
+        int index = rand() % nb_element;
+        t = all_t[index];
         t.score = best;
-        //printf("meilleur tuple : %d | %d %d \n", t.score, t.position.posX, t.position.posY);
         return t;
     } else {
         int best = INT_MAX;
@@ -667,23 +675,25 @@ tuple minimax(game_tab tab, player *pl, player *pl_min, int depth, int alpha, in
                         i=X;
                         break;
                     }
+
                     if (new_t.score == best) {
-                        int random = rand() % 2;
-                        if (random == 0) {
-                            best = -new_t.score;
-                            t.position = played_position;
-                        }
-                    } else if (new_t.score < best){
+                        all_t[nb_element] = new_t;
+                        nb_element++;
+                    } else if (-new_t.score < best){
                         best = -new_t.score;
-                        t.position = played_position;
+                        new_t.position = played_position;
+
+                        all_t[0] = new_t;
+                        nb_element = 1;
                     }
                     beta = min(beta, best);
                     freeTab(new_tab, X, Y);
                 }
             }
         }
+        int index = rand() % nb_element;
+        t = all_t[index];
         t.score = best;
-        //printf("meilleur tuple : %d | %d %d \n", t.score, t.position.posX, t.position.posY);
         return t;
     }
 }

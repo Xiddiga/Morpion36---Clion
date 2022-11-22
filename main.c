@@ -13,15 +13,14 @@ int main() {
     bool is_finish = false;
     bool *finishMorpion = &is_finish;
     int tourJeu = 0;
-    pos position_played;
 
     token*** tab = create_game_tab(X,Y);
     initialize_Tab(tab,X,Y);
 
     bool bot_vs_human = who_play();
 
-    player *pl1 = init_player('c',true, false);
-    player *pl2 = init_player('r',true, false);
+    player *pl1 = init_player('c', true, false);
+    player *pl2 = init_player('r', true, false);
 
     set_players(bot_vs_human, pl1);
 
